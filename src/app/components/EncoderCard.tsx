@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Card,
@@ -14,21 +14,24 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function EncoderCard() {
-  const [imagePreview, setImagePreview] = useState('');
+  const [imagePreview, setImagePreview] = useState("");
 
   useEffect(() => {
     const fetchPreview = async () => {
       try {
-        const preview = await axios.get(`http://192.168.16.45/api/v2/public/common/devices/Source3-PCShow/preview`);
+        const preview = await axios.get(
+          `http://192.168.16.45/api/v2/public/common/devices/Source3-PCShow/preview`
+        );
         setImagePreview(preview.data);
       } catch (error) {
         console.error("Error fetching preview:", error);
 
         // Mostrar el toast de error
         toast("Error de Database", {
-            position: "top-right",
-            description: "No se pudo cargar la imagen del encoder. Por favor, inténtalo de nuevo.",
-          });
+          position: "top-right",
+          description:
+            "No se pudo cargar la imagen del encoder. Por favor, inténtalo de nuevo.",
+        });
       }
     };
 
@@ -38,7 +41,7 @@ export default function EncoderCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Card Title</CardTitle>
+        <CardTitle>Card Encoder</CardTitle>
         <CardDescription>Card Description</CardDescription>
       </CardHeader>
       <CardContent>
