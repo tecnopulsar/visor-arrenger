@@ -22,6 +22,7 @@ export default function EncoderCard() {
         const preview = await axios.get(
           `http://192.168.16.45/api/v2/public/common/devices/Source3-PCShow/preview`
         );
+        console.log(preview)
         setImagePreview(preview.data);
       } catch (error) {
         console.error("Error fetching preview:", error);
