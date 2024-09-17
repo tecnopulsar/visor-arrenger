@@ -2,64 +2,40 @@
 
 import { useEffect, useState } from 'react';
 
-export default function EncoderCard() {
-  const [imageSrc, setImageSrc] = useState('');
+export default function EncoderCard({ decoderId }) {
+  const [imageSrc, setImageSrc] = useState(`/preview/${decoderId}/preview.jpeg`);
 
   useEffect(() => {
-    const fetchImage = async () => {
+    const interval = setInterval(async () => {
       try {
-        // Descargar la imagen desde el servidor
-        // const response = await fetch(`/preview/1001/preview`);
-        const response = await fetch(`http://192.168.16.45/api/v2/public/common/devices/Source3-PCShow/preview`);
-
+        // Llamada a la API proxy en lugar de a la API externa directamente
+        const response = await fetch('/api/preview');
+        
         if (!response.ok) {
-          throw new Error(`Error fetching image: ${response.statusText}`);
+          throw new Error('Failed to fetch image');
         }
 
-        // Convertir la respuesta en un blob con el tipo MIME explícito 'image/jpeg'
+        // Crear un blob de la respuesta
         const blob = await response.blob();
 
-        // Verificar si el Blob es de tipo 'image/jpeg'
-        // const imageType = blob.type === 'image/jpeg' ? 'jpeg' : 'jpeg'; // Asumimos que es JPEG
+        // Crear una URL temporal de la imagen
+        const imageUrl = URL.createObjectURL(blob);
 
-        // Crear un objeto URL para la imagen blob
-        const imageBlobURL = URL.createObjectURL(new Blob([blob], { type: 'image/jpeg' }));
-
-        // Guardar la imagen en localStorage con una extensión .jpeg
-        localStorage.setItem('cachedImage', imageBlobURL);
-
-        // Actualizar la fuente de la imagen
-        setImageSrc(imageBlobURL);
-
+        // Actualizar la imagen en el componente
+        setImageSrc(imageUrl);
       } catch (error) {
         console.error('Error fetching the preview image:', error);
       }
-    };
-
-    // Verificar si hay una imagen previamente almacenada
-    const cachedImage = localStorage.getItem('cachedImage');
-    if (cachedImage) {
-      setImageSrc(cachedImage);
-    } else {
-      // Si no hay imagen almacenada, la descargamos
-      fetchImage();
-    }
-
-    // Configurar el intervalo para actualizar la imagen cada 20 segundos
-    const interval = setInterval(fetchImage, 20000);
+    }, 20000); // Cada 20 segundos
 
     // Limpiar el intervalo al desmontar el componente
     return () => clearInterval(interval);
-  }, []);
+  }, [decoderId]);
 
   return (
     <div>
-      <h2>Preview for Decoder</h2>
-      {imageSrc ? (
-        <img src={imageSrc} alt="Preview for decoder" width={240} height={135} />
-      ) : (
-        <p>Loading...</p>
-      )}
+      <h2>Preview for Decoder {decoderId}</h2>
+      <img src={imageSrc} alt={`Preview for decoder ${decoderId}`} width={240} height={135} />
     </div>
   );
 }
