@@ -4,7 +4,7 @@ import { useState } from "react";
 export default function ImageFileAccess() {
   const [imageSrc, setImageSrc] = useState(null);
   const [fileName, setFileName] = useState("");
-  const [imageFile, setImageFile] = useState(null);
+  // const [imageFile, setImageFile] = useState(null);
 
   // Función para abrir un archivo de imagen
   const handleOpenImage = async () => {
