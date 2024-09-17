@@ -4,7 +4,8 @@ export default function EncodersPage() {
     return (
         <div>
             <h1>Encoders Page</h1>
-            <EncoderCard/>
+            <EncoderCard nameDevice='Alem1'/>
+            <EncoderCard nameDevice='Alem2'/>
         </div>
     );
 }

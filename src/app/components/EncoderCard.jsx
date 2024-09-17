@@ -2,40 +2,43 @@
 
 import { useEffect, useState } from 'react';
 
-export default function EncoderCard({ decoderId }) {
-  const [imageSrc, setImageSrc] = useState(`/preview/${decoderId}/preview.jpeg`);
+export default function EncoderCard({ nameDevice }) {
+  const [imageSrc, setImageSrc] = useState(null);
 
   useEffect(() => {
-    const interval = setInterval(async () => {
+    const fetchImage = async () => {
       try {
-        // Llamada a la API proxy en lugar de a la API externa directamente
-        const response = await fetch('/api/preview');
-        
+        // Construir la URL de la API basada en el ID del decodificador
+        const response = await fetch(`http://192.168.16.45/api/v2/public/common/devices/${nameDevice}/preview`);
+        // const response = await fetch(`http://localhost:3005/api/v2/public/common/devices/${nameDevice}/preview`);
         if (!response.ok) {
+          console.log("error")
           throw new Error('Failed to fetch image');
+
         }
 
-        // Crear un blob de la respuesta
-        const blob = await response.blob();
-
-        // Crear una URL temporal de la imagen
-        const imageUrl = URL.createObjectURL(blob);
-
         // Actualizar la imagen en el componente
-        setImageSrc(imageUrl);
+        setImageSrc(response.url);
       } catch (error) {
         console.error('Error fetching the preview image:', error);
       }
-    }, 20000); // Cada 20 segundos
+    };
+    fetchImage(); // Llamar a la función de fetch al montar el componente
+
+    const interval = setInterval(fetchImage, 20000); // Cada 20 segundos
 
     // Limpiar el intervalo al desmontar el componente
     return () => clearInterval(interval);
-  }, [decoderId]);
+  }, [nameDevice]);
 
   return (
     <div>
-      <h2>Preview for Decoder {decoderId}</h2>
-      <img src={imageSrc} alt={`Preview for decoder ${decoderId}`} width={240} height={135} />
+      <h2>Preview for Decoder {nameDevice}</h2>
+      {imageSrc ? (
+        <img src={imageSrc} alt={`Preview for decoder ${nameDevice}`} width={240} height={135} />
+      ) : (
+        <p>Loading image...</p>
+      )}
     </div>
   );
 }
